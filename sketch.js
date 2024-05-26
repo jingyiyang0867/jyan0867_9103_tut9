@@ -1,5 +1,6 @@
-
 let coloredCircles = []; //empty array to save the attributes about the circle
+
+let noiseOffset = 0; // noice offset for movement, it was set as 0 first
 
 //create a class for all the circles
 class ColoredCircle {
@@ -8,6 +9,17 @@ class ColoredCircle {
     this.radius = radius;
     this.colors = colors;
   }
+
+  // use update to update colored circle's position based on noise
+  update() {
+    //use noise to generate smooth movement
+    //get x movement and y movement based on the current circle's position and noise, map noise from (0, 1) to the range (-2, 2).
+    let xMove = map(noise(this.position.x * 0.01, this.position.y * 0.01, noiseOffset), 0, 1, -2, 2);
+    let yMove = map(noise(this.position.y * 0.01, this.position.x * 0.01, noiseOffset), 0, 1, -2, 2);
+  
+    //update its position
+    this.position.add(createVector(xMove, yMove));
+}
 
   draw() {
     noStroke();
@@ -25,6 +37,7 @@ class ColoredCircle {
   }
 }
 
+//set up canvas
 function setup() {
   //let the width and height became the size of the canvas
   createCanvas(windowWidth, windowHeight); 
@@ -33,8 +46,18 @@ function setup() {
 
 function draw() {
   drawBackground(); 
+  updateCirclesPosition(); //update the position of the circle
   for (let circle of coloredCircles) {
     circle.draw();
+  }
+}
+
+//this function is to upate circles' position
+function updateCirclesPosition() {
+  noiseOffset += 0.01;  // increase the noise slightly to create a smooth movement
+  
+  for (let circle of coloredCircles) {
+    circle.update(); //update position for each circle
   }
 }
 
@@ -95,7 +118,8 @@ function drawCircles() {
 }
 
 function drawBackground() {
-  background(4, 80, 111); //set background color
+ //i changed the background color to purple
+ background (60,49,100, 20);  //make the alpha value as 20 to make the trace disappear slowly 
 }
 
 function windowResized() {
