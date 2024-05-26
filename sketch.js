@@ -1,4 +1,4 @@
-let whiteDots = []; // empty array to save the white dots in the background
+
 let coloredCircles = []; //empty array to save the attributes about the circle
 
 //create a class for all the circles
@@ -39,15 +39,6 @@ function draw() {
 }
 
 function drawCircles() {
-  // randomly create the position for the white dots on the background
-  for (let i = 0; i < 250; i++) { //create 250 dots
-    let x = random(width); //random x position
-    let y = random(height); //random y position
-    //createVector() is a function to create a two-dimensional vector
-    //after random the position, add the position to the array
-    whiteDots.push(createVector(x, y)); 
-  }
-
   coloredCircles = [];
   //array large circles color
   let largeCircleColors = [
@@ -105,15 +96,9 @@ function drawCircles() {
 
 function drawBackground() {
   background(4, 80, 111); //set background color
-  for (let dot of whiteDots) { //draw white dots on the background
-    noStroke();
-    fill(255);
-    ellipse(dot.x, dot.y, 15); //based on the dot's position in the whiteDots array, draw the dot
-  }
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight); //to make the canvas fit the screen
-  whiteDots = []; // after resize the canvas, make the array empty
   drawCircles();  //redraw the drawCircles() function
 }
