@@ -2,10 +2,15 @@ let coloredCircles = []; //empty array to save the attributes about the circle
 
 let noiseOffset = 0; // noice offset for movement, it was set as 0 first
 
+let coloredDots = []; // empty array to save the colored dots
+
 //create a class for all the circles
 class ColoredCircle {
   constructor(x, y, radius, colors) { //this class inlcude the x and y position of the circle, its radius and color
-    this.position = createVector(x, y);  //createVector() is a function to create a two-dimensional vector
+    this.position = createVector(x, y);  
+    //createVector() is a function that creates a two-dimensional vector.
+    //In the code, createVector(x, y) is used to specify the center coordinates of the circle, which is a two-dimensional vector, 
+    //so we use this function to conveniently represent the position of the circle in the code. 
     this.radius = radius;
     this.colors = colors;
   }
@@ -37,6 +42,33 @@ class ColoredCircle {
   }
 }
 
+// create a class for all the colored dots
+class ColoredDot {
+  constructor(x, y) { //this class only include dots' x and y position
+    this.position = createVector(x, y);
+    this.radius = 8;  //the radius of the dot is set asa 8
+    this.color = color(random(255), random(255), random(255)); // the color of the dot is random select
+  }
+
+  // update the dot's position based on noise
+  update() {
+    // use noise to generate smooth movement
+    //get x movement and y movement based on the current dot's position and noise, map noise from (0, 1) to the range (-2, 2).
+    let xMove = map(noise(this.position.x * 0.01, this.position.y * 0.01, noiseOffset), 0, 1, -1, 1);
+    let yMove = map(noise(this.position.y * 0.01, this.position.x * 0.01, noiseOffset), 0, 1, -1, 1);
+    
+    // update dot's position
+    this.position.add(createVector(xMove, yMove));
+  }
+
+  draw() {
+    noStroke();
+    fill(this.color);  //fill the random color
+    ellipse(this.position.x, this.position.y, this.radius * 2);
+  }
+}
+
+
 //set up canvas
 function setup() {
   //let the width and height became the size of the canvas
@@ -47,8 +79,16 @@ function setup() {
 function draw() {
   drawBackground(); 
   updateCirclesPosition(); //update the position of the circle
+  updateDotsPosition(); // update the position of colored dots
+
+  //draw colored circles
   for (let circle of coloredCircles) {
     circle.draw();
+  }
+
+  //draw colored dots
+  for (let dot of coloredDots) {
+    dot.draw();
   }
 }
 
@@ -58,6 +98,13 @@ function updateCirclesPosition() {
   
   for (let circle of coloredCircles) {
     circle.update(); //update position for each circle
+  }
+}
+
+//this function is to upate dots' position
+function updateDotsPosition() {
+  for (let dot of coloredDots) {
+    dot.update();  //update position for each dot
   }
 }
 
@@ -115,14 +162,22 @@ function drawCircles() {
     //the radisu for the large circle is 120
     coloredCircles.push(new ColoredCircle(circlePositions[i].x, circlePositions[i].y, 120, colorsSet));
   }
+
+   // create colored dots at random positions
+   for (let i = 0; i < 100; i++) {
+    let x = random(width); //random x position
+    let y = random(height); //random y position
+    coloredDots.push(new ColoredDot(x, y)); 
+  }
 }
 
 function drawBackground() {
- //i changed the background color to purple
+ //I changed the background color to purple
  background (60,49,100, 20);  //make the alpha value as 20 to make the trace disappear slowly 
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight); //to make the canvas fit the screen
+  coloredDots = []; //make the colored dots array emptey when resize the window
   drawCircles();  //redraw the drawCircles() function
 }
